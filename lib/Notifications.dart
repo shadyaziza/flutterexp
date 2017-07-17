@@ -18,8 +18,9 @@ class Notifications extends StatelessWidget{
       child: new Center(
         //widthFactor: 30.0,
 
-        child: new Text('Notifications',
-            style: new TextStyle(fontSize: 40.0, color: Colors.black87)),
+        child: /*new Text('Notifications',
+            style: new TextStyle(fontSize: 40.0, color: Colors.black87))*/
+          new IconButton(icon: new Icon(Icons.alarm,color: Colors.blueAccent,), onPressed: null,iconSize: 100.0,),
       ),
     );
 }}

@@ -17,8 +17,9 @@ class Feedback extends StatelessWidget{
     return new Container(
       decoration: new BoxDecoration(color: Colors.white),
       child: new Center(
-        child: new Text('Feedback',
-            style: new TextStyle(fontSize: 40.0, color: Colors.black87)),
+        child: /*new Text('Feedback',
+            style: new TextStyle(fontSize: 40.0, color: Colors.black87))*/
+        new IconButton(icon: new Icon(Icons.inbox, color:Colors.blueAccent), onPressed: null, iconSize: 100.0,)
       ),
     );
 }}

@@ -1,6 +1,11 @@
-class Json{
+import 'package:full3/Feed.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-  Json();
+class Json {
+
+  //Json();
   //String lol;
   String _card;
   String _source;
@@ -9,6 +14,12 @@ class Json{
   String _hash;
   String _salary;
   String _location;
+
+  Json(setCompanyName,setHash);
+
+  /*Json.fromJson(Map value){
+   getCompanyName()= value['Company Name'];
+  }*/
 
   Map cardDetails (){
 
@@ -43,7 +54,10 @@ class Json{
   }
 
   setCompanyName(){
-    this._companyName = "Shedo";
+    this._companyName = "@Google";
+  }
+  setHash(){
+    this._hash="Flutter Developer #flutter #android #iOS";
   }
 
 

@@ -13,6 +13,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = new GoogleSignIn();
 
@@ -231,7 +232,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               new Tab (icon: new Icon(Icons.search),text: 'Find',),
               new Tab (icon: new Icon(Icons.notifications_active), text: 'Alert',),
               new Tab (icon: new Icon(Icons.mail), text: 'Inbox'),
-              new Tab (icon: new Icon(Icons.account_box), text: 'Me'),
+      //        new Tab (icon: new Icon(Icons.account_box), text: 'Me'),
 
             ]),
       ),
@@ -242,7 +243,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           new second.Search(),
           new third.Notifications(),
           new fourth.Feedback(),
-          new fifth.Profile(),
+    //      new fifth.Profile(),
         ],
       ),
     );
