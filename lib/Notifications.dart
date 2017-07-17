@@ -16,6 +16,8 @@ class Notifications extends StatelessWidget{
     return new Container(
       decoration: new BoxDecoration(color: Colors.white),
       child: new Center(
+        //widthFactor: 30.0,
+
         child: new Text('Notifications',
             style: new TextStyle(fontSize: 40.0, color: Colors.black87)),
       ),

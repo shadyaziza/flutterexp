@@ -1,6 +1,3 @@
-//to login correctly, return new page in home page or make home page state icon change after login
-//missing implementation for signin/out
-//controller is commented in search
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,12 +9,17 @@ import './Feedback.dart' as fourth;
 import './Profile.dart' as fifth;
 import './Settings.dart' as sixth;
 import 'package:path/path.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = new GoogleSignIn();
 
+
+
 Future<String> _testSignInWithGoogle() async {
+
   final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
   final GoogleSignInAuthentication googleAuth =
   await googleUser.authentication;
@@ -32,28 +34,37 @@ Future<String> _testSignInWithGoogle() async {
 
   //if ( user != null){
   //Widget build(BuildContext context){
-    //return new Scaffold(
+  //return new Scaffold(
   //Navigator.of(context).pushNamed('feed'),)}
-    print('$user');
-    runApp(
+  print('$user');
+      runApp(
       new MaterialApp(
         home: new Tabs(),
-      )
-    );
-    //main();}
- // else {print ('error');};
+          routes: <String, WidgetBuilder>{
+            "/Feed": (BuildContext context) => new first.Feed(),
+            "/Settings": (BuildContext context) => new sixth.Settings(),
+            "/Profile": (BuildContext context) => new fifth.Profile(),
+            "/Search": (BuildContext context) => new second.Search(),
+            //"/Signout":(BuildContext context) => new LogoutPage(),
+            "/Notify": (BuildContext context) => new third.Notifications(),
+            "/Feedback": (BuildContext context) => new fourth.Feedback(),
+            "/Tabs": (BuildContext context) => new Tabs(),
+          }
+      ));
+
+  //main();}
+  // else {print ('error');};
   return 'signInWithGoogle succeeded: $user';
 }
 
 
-
 void main() {
   runApp(new MaterialApp(
-    home: new LoginPage(),
+      home: new LoginPage(),
 
       routes: <String, WidgetBuilder>{
         "/Feed": (BuildContext context) => new first.Feed(),
-        "/Settings":(BuildContext context) => new sixth.Settings(),
+        "/Settings": (BuildContext context) => new sixth.Settings(),
         "/Profile": (BuildContext context) => new fifth.Profile(),
         "/Search": (BuildContext context) => new second.Search(),
         //"/Signout":(BuildContext context) => new LogoutPage(),
@@ -65,23 +76,38 @@ void main() {
   );
 }
 
-void _signIn(){
+void _signIn() {
   _testSignInWithGoogle();
 }
 
-class LoginPage extends StatelessWidget{
+class LoginPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
+  //FirebaseAuth.instance.currentUser.email=null;
+
     return new Scaffold(
-        appBar: new AppBar(title: new Text("TalentDraw Login"), backgroundColor: Colors.blue,),
+
+        appBar: new AppBar(
+          title: new Text("Sign In"), centerTitle:true, backgroundColor: Colors.blue,),
         body: new Container(
             child: new Center(
-                child: new Column(
+                child:
+                new Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new IconButton(icon:new Icon(Icons.account_box, color: Colors.red), onPressed: _signIn/*(){Navigator.of(context).pushNamed("/Tabs");}*/, iconSize: 80.0,),
-                    new Text("Google Signin")
-                  ],
+                  children: <Widget>[new FloatingActionButton(
+                      child: new Container(
+                        decoration: new BoxDecoration(
+                          color: Colors.white,
+                          image:new DecorationImage(image: new NetworkImage("https://maxcdn.icons8.com/Share/icon/Logos//google_logo1600.png"),fit: BoxFit.cover,alignment: FractionalOffset.topCenter)
+                        ),
+                      ), onPressed: _signIn,)
+                  ,
+                    /*new IconButton(
+                      icon: new Icon(Icons.account_box, color: Colors.red),
+                      onPressed:  _signIn/*(){Navigator.of(context).pushNamed("/Tabs");}*/,
+                      iconSize: 80.0,),
+                    new Text("Google Signin")*/
+                    ],
                 )
             )
         )
@@ -90,90 +116,126 @@ class LoginPage extends StatelessWidget{
 }
 
 
-void app(){
+/*void app() {
   new MaterialApp(
 
       title: "TalentDraw",
-      home: new Tabs( ),
+      home: new Tabs(),
       routes: <String, WidgetBuilder>{
-        "/Feed":(BuildContext context) => new first.Feed(),
-       // "/Settings":(BuildContext context) => new Settings(),
-        "/Profile":(BuildContext context) => new fifth.Profile(),
-        "/Search":(BuildContext context) => new second.Search(),
+        "/Feed": (BuildContext context) => new first.Feed(),
+        // "/Settings":(BuildContext context) => new Settings(),
+        "/Profile": (BuildContext context) => new fifth.Profile(),
+        "/Search": (BuildContext context) => new second.Search(),
         //"/Signout":(BuildContext context) => new LogoutPage(),
-        "/Notify":(BuildContext context) => new third.Notifications(),
-        "/Feedback":(BuildContext context) => new fourth.Feedback(),
+        "/Notify": (BuildContext context) => new third.Notifications(),
+        "/Feedback": (BuildContext context) => new fourth.Feedback(),
         "/Tabs": (BuildContext context) => new Tabs(),
       }
 
   );
+}*/
 
-}
-
-class Tabs extends StatefulWidget{
+class Tabs extends StatefulWidget {
 
   @override
-  TabsState createState()=> new TabsState();
+  TabsState createState() => new TabsState();
 }
 
-void _signOut(){
+Future <String> _signOut()  async{
+    //FirebaseAuth.instance = new FirebaseAuth._();
+    await FirebaseAuth.instance.signOut();
+    await _googleSignIn.signOut();
+  // instance = new FirebaseAuth();
 
-  FirebaseAuth.instance.signOut();
-  FirebaseUser user = FirebaseAuth.instance.currentUser;
-  print ('$user');
-  runApp(
-      new MaterialApp(
-        home: new LoginPage(),
-      )
+  //FirebaseAuth.instance.signOut();
+  //FirebaseUser user = FirebaseAuth.instance.currentUser;
+  //print('$user');
+  /*runApp( new MaterialApp(
+    return new LoginPage()
+  ));*/
+   main();
+  return "Signedout";
 
-  );
 }
 
-class TabsState extends State<Tabs> with SingleTickerProviderStateMixin{
+
+class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TabController controller;
+
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    controller=new TabController(length: 5, vsync: this);
+    controller = new TabController(length: 5, vsync: this);
   }
+
   @override
-  void dispose(){
+  void dispose() {
     controller.dispose();
     super.dispose();
   }
 
   @override
-
   //Drawer drawer = new Drawer();
-  Widget build (BuildContext context){
+  Widget build(BuildContext context) {
     void _profile() {
-      Navigator.popAndPushNamed(context, "/Profile");}
-    var headerText = new Text('@'+FirebaseAuth.instance.currentUser.displayName, style: new TextStyle(color: Colors.blueAccent));
-    var header = new DrawerHeader(child: headerText);
+      Navigator.popAndPushNamed(context, "/Profile");
+    }
+
+    var userPhoto = new CircleAvatar( backgroundImage: new NetworkImage(FirebaseAuth.instance.currentUser.photoUrl,),  );
+    var userEmail = new Text(
+         FirebaseAuth.instance.currentUser.email,
+        style: new TextStyle(color: Colors.white),);
+    var userName = new Text(
+        '@' + FirebaseAuth.instance.currentUser.displayName,
+        style: new TextStyle(color: Colors.white),);
+    var header = new UserAccountsDrawerHeader (accountName: userName  ,accountEmail:userEmail , currentAccountPicture: userPhoto,);
+
     //var signoutText = new Text('Signout', style: new TextStyle(color: Colors.blueAccent));
     //var signoutIcon = new Icon(Icons.clear);
-    var signout = new ListTile(leading: const Icon(Icons.clear, color: Colors.lightBlueAccent,),title: const Text('Signout'), onTap:_signOut ,);
-    var profile = new ListTile(leading: const Icon(Icons.account_box, color: Colors.lightBlueAccent,),title: const Text('Profile'), onTap:_profile);
-    var settings = new ListTile(leading: const Icon(Icons.settings, color: Colors.lightBlueAccent,),title: const Text('Settings'), onTap:(){Navigator.of(context).pushNamed("/Settiings");} ,);
-    var starred = new ListTile(leading: const Icon(Icons.star, color: Colors.lightBlueAccent,),title: const Text('Starred'), onTap:/*(){Navigator.of(context).pushNamed("/Settings");}*/null);
-    var children = [header, profile, starred, settings, signout];
+    var signout = new ListTile(
+      leading: const Icon(Icons.clear, color: Colors.lightBlueAccent,),
+      title: const Text('Signout'),
+      onTap: _signOut,);
+    var profile = new ListTile(
+        leading: const Icon(Icons.account_box, color: Colors.lightBlueAccent,),
+        title: const Text('Profile'),
+        onTap: _profile);
+    var settings = new ListTile(
+      leading: const Icon(Icons.settings, color: Colors.lightBlueAccent,),
+      title: const Text('Settings'),
+      onTap: () {
+        Navigator.of(context).pushNamed("/Settiings");
+      },);
+   /* var login = new ListTile(
+        leading: const Icon(Icons.accessibility, color: Colors.lightBlueAccent,),
+        title: const Text('Login'),
+        onTap: main);*/
+    
+    var starred = new ListTile(
+        leading: const Icon(Icons.star, color: Colors.lightBlueAccent,),
+        title: const Text('Starred'),
+        onTap: /*(){Navigator.of(context).pushNamed("/Settings");}*/null);
+    var children = [header, profile, starred, settings, signout, ];
     var listView = new ListView(children: children);
     var drawer = new Drawer(child: listView);
     return new Scaffold(
       drawer: drawer,
-      appBar: new AppBar(title: new Text("TalentDraw"), backgroundColor: Colors.blue,
-          bottom: new TabBar(
-              controller:controller,
-              tabs: <Tab>[
-              new Tab (icon: new Icon(Icons.business),),
-              new Tab (icon: new Icon(Icons.search)),
-              new Tab (icon: new Icon(Icons.notifications_active)),
-              new Tab (icon: new Icon(Icons.mail)),
-              new Tab (icon: new Icon(Icons.account_box)),
+      appBar: new AppBar(
+        centerTitle: true,
+        title: new Text("TalentDraw"), backgroundColor: Colors.blue,
+        bottom: new TabBar(
+            controller: controller,
+            tabs: <Tab>[
+              new Tab (icon: new Icon(Icons.business), text: 'Draw',),
+              new Tab (icon: new Icon(Icons.search),text: 'Find',),
+              new Tab (icon: new Icon(Icons.notifications_active), text: 'Alert',),
+              new Tab (icon: new Icon(Icons.mail), text: 'Inbox'),
+              new Tab (icon: new Icon(Icons.account_box), text: 'Me'),
 
-    ] ),
-    ),
-    body: new TabBarView(
+            ]),
+      ),
+      body: new TabBarView(
         controller: controller,
         children: <Widget>[
           new first.Feed(),
@@ -182,22 +244,18 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin{
           new fourth.Feedback(),
           new fifth.Profile(),
         ],
-    ) ,
+      ),
     );
-
   }
-  }
+}
 
- // void _profile() {
-  //Navigator.popAndPushNamed(context, "/Profile");}
-  //}
+
 
 /*class Feed extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     Drawer drawer = new Drawer();
     return new Scaffold( drawer: drawer,
-
         appBar: new AppBar(/*title:new Text ('FEED')*/
           actions: <Widget>[
             new IconButton(icon: new Icon(Icons.face),tooltip: 'Profile',onPressed: (){Navigator.of(context).pushNamed("/Profile");},),
@@ -251,7 +309,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin{
             hintText: 'Type something',
           ),
         ),
-
         new IconButton(icon: new Icon(Icons.home), onPressed: (){Navigator.of(context).pushNamed("/Feed");} ),
         new RaisedButton(
           onPressed: () {
@@ -286,7 +343,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin{
                         hintText: 'Type something',
                       ),
                     ),
-
                     new IconButton(icon: new Icon(Icons.home), onPressed: (){Navigator.of(context).pushNamed("/Feed");} ),
                     new RaisedButton(
                       onPressed: () {
